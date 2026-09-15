@@ -4,7 +4,6 @@ import { MotionPathPlugin } from 'gsap/MotionPathPlugin'
 import Lenis from 'lenis'
 import 'lenis/dist/lenis.css'
 import './style.css'
-import { createFluidField } from './fluid-field.js'
 
 gsap.registerPlugin(ScrollTrigger)
 gsap.registerPlugin(MotionPathPlugin)
@@ -563,12 +562,6 @@ function initStickers() {
 
   const L = { host, layer, items: [], width: 0, height: 0, unit: 1, top: 0, topPad: 0 }
 
-  /* a coarse velocity field (ported from haoqi-revamp's fluid.js) that the
-     pointer pushes around; stickers drift with it and settle back to rest */
-  const fluid = createFluidField()
-  const SWAY = { gain: 0.055, max: 46, follow: 7, rot: 0.02 }
-  let pointer = null
-
   const pick = () => STICKERS[Math.floor(Math.random() * STICKERS.length)]
   const worldUnit = () => window.innerHeight / WORLD_HEIGHT
   const randomY = () => L.topPad + Math.random() * Math.max(1, L.height - L.topPad)
@@ -583,7 +576,6 @@ function initStickers() {
     layer.style.height = 'auto'
     L.height = layer.clientHeight
     L.topPad = L.unit * CFG.size * 0.6
-    fluid.setSize(L.width, L.height)
   }
 
   function newItem(opts = {}) {
@@ -609,9 +601,6 @@ function initStickers() {
       windAmp:
         ((0.3 + Math.random() * CFG.windStrength) / CFG.windFrequency) * L.unit * 0.45,
       grow: 0,
-      fx: 0,
-      fy: 0,
-      rotFx: 0,
       oneShot: !!opts.oneShot,
     }
     L.items.push(it)
@@ -643,9 +632,7 @@ function initStickers() {
   function render(t) {
     for (const it of L.items) {
       const dx = Math.sin(t * CFG.windFrequency + it.windPhase) * it.windAmp
-      const x = it.x + dx + it.fx
-      const y = it.y + it.fy
-      it.el.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) rotate(${(it.rot + it.rotFx).toFixed(3)}rad) scale(${it.grow.toFixed(3)})`
+      it.el.style.transform = `translate3d(${(it.x + dx).toFixed(1)}px, ${it.y.toFixed(1)}px, 0) rotate(${it.rot.toFixed(3)}rad) scale(${it.grow.toFixed(3)})`
       it.el.style.opacity = it.grow.toFixed(3)
     }
   }
@@ -655,22 +642,11 @@ function initStickers() {
     const dt = Math.min((now - last) / 1000, 0.1)
     last = now
     const t = now / 1000
-    fluid.step(dt)
-    const k = Math.min(1, dt * SWAY.follow)
     for (let i = L.items.length - 1; i >= 0; i--) {
       const it = L.items[i]
       it.grow = Math.min(1, it.grow + dt * CFG.growSpeed)
       it.y += it.fall * dt
       it.rot += it.rotSpeed * dt
-
-      if (L.width > 0 && L.height > 0) {
-        const v = fluid.sample(it.x / L.width, it.y / L.height)
-        const wantX = Math.max(-SWAY.max, Math.min(SWAY.max, v.vx * L.width * SWAY.gain))
-        const wantY = Math.max(-SWAY.max, Math.min(SWAY.max, v.vy * L.height * SWAY.gain))
-        it.fx += (wantX - it.fx) * k
-        it.fy += (wantY - it.fy) * k
-        it.rotFx += (v.vx * SWAY.rot - it.rotFx) * k
-      }
 
       if (it.oneShot) {
         if (it.y > L.height + it.size) {
@@ -697,24 +673,6 @@ function initStickers() {
     const x = e.clientX - r.left
     const y = e.clientY - r.top - L.top
     burst(x, Math.max(L.topPad, Math.min(y, L.height)))
-  })
-
-  host.addEventListener('pointermove', (e) => {
-    if (!L.width || !L.height) return
-    const r = host.getBoundingClientRect()
-    const x = e.clientX - r.left
-    const y = e.clientY - r.top - L.top
-    const inside = x >= 0 && x <= L.width && y >= 0 && y <= L.height
-    if (pointer && inside) {
-      const dx = (x - pointer.x) / L.width
-      const dy = (y - pointer.y) / L.height
-      if (dx || dy) fluid.splat(x / L.width, y / L.height, dx, dy)
-    }
-    pointer = { x, y }
-  })
-
-  host.addEventListener('pointerleave', () => {
-    pointer = null
   })
 
   window.addEventListener('resize', () => {
