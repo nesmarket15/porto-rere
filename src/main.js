@@ -4,6 +4,7 @@ import { MotionPathPlugin } from 'gsap/MotionPathPlugin'
 import Lenis from 'lenis'
 import 'lenis/dist/lenis.css'
 import './style.css'
+import { createFluidField } from './fluid-field.js'
 
 gsap.registerPlugin(ScrollTrigger)
 gsap.registerPlugin(MotionPathPlugin)
@@ -71,8 +72,14 @@ function initPageTransition() {
     const target = document.querySelector(hash)
     if (!target) return
 
+    /* the hero is position:sticky (pinned), so its measured position equals the
+       current scroll — treat #home as "go to the very top" instead */
+    const isTop = hash === '#home'
+    const scrollToTarget = (opts) =>
+      isTop ? lenis.scrollTo(0, opts) : lenis.scrollTo(target, { offset: -60, ...opts })
+
     if (reduced) {
-      lenis.scrollTo(target, { offset: -60, duration: 1.2 })
+      scrollToTarget({ duration: 1.2 })
       return
     }
 
@@ -104,7 +111,7 @@ function initPageTransition() {
     })
 
     /* navigate while covered */
-    lenis.scrollTo(target, { offset: -60, immediate: true })
+    scrollToTarget({ immediate: true })
 
     /* reveal: curve sweeps bottom→top opening the page, label exits, main settles */
     proxy.p = 0
@@ -556,6 +563,12 @@ function initStickers() {
 
   const L = { host, layer, items: [], width: 0, height: 0, unit: 1, top: 0, topPad: 0 }
 
+  /* a coarse velocity field (ported from haoqi-revamp's fluid.js) that the
+     pointer pushes around; stickers drift with it and settle back to rest */
+  const fluid = createFluidField()
+  const SWAY = { gain: 0.055, max: 46, follow: 7, rot: 0.02 }
+  let pointer = null
+
   const pick = () => STICKERS[Math.floor(Math.random() * STICKERS.length)]
   const worldUnit = () => window.innerHeight / WORLD_HEIGHT
   const randomY = () => L.topPad + Math.random() * Math.max(1, L.height - L.topPad)
@@ -570,6 +583,7 @@ function initStickers() {
     layer.style.height = 'auto'
     L.height = layer.clientHeight
     L.topPad = L.unit * CFG.size * 0.6
+    fluid.setSize(L.width, L.height)
   }
 
   function newItem(opts = {}) {
@@ -595,6 +609,9 @@ function initStickers() {
       windAmp:
         ((0.3 + Math.random() * CFG.windStrength) / CFG.windFrequency) * L.unit * 0.45,
       grow: 0,
+      fx: 0,
+      fy: 0,
+      rotFx: 0,
       oneShot: !!opts.oneShot,
     }
     L.items.push(it)
@@ -626,7 +643,9 @@ function initStickers() {
   function render(t) {
     for (const it of L.items) {
       const dx = Math.sin(t * CFG.windFrequency + it.windPhase) * it.windAmp
-      it.el.style.transform = `translate3d(${(it.x + dx).toFixed(1)}px, ${it.y.toFixed(1)}px, 0) rotate(${it.rot.toFixed(3)}rad) scale(${it.grow.toFixed(3)})`
+      const x = it.x + dx + it.fx
+      const y = it.y + it.fy
+      it.el.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) rotate(${(it.rot + it.rotFx).toFixed(3)}rad) scale(${it.grow.toFixed(3)})`
       it.el.style.opacity = it.grow.toFixed(3)
     }
   }
@@ -636,11 +655,22 @@ function initStickers() {
     const dt = Math.min((now - last) / 1000, 0.1)
     last = now
     const t = now / 1000
+    fluid.step(dt)
+    const k = Math.min(1, dt * SWAY.follow)
     for (let i = L.items.length - 1; i >= 0; i--) {
       const it = L.items[i]
       it.grow = Math.min(1, it.grow + dt * CFG.growSpeed)
       it.y += it.fall * dt
       it.rot += it.rotSpeed * dt
+
+      if (L.width > 0 && L.height > 0) {
+        const v = fluid.sample(it.x / L.width, it.y / L.height)
+        const wantX = Math.max(-SWAY.max, Math.min(SWAY.max, v.vx * L.width * SWAY.gain))
+        const wantY = Math.max(-SWAY.max, Math.min(SWAY.max, v.vy * L.height * SWAY.gain))
+        it.fx += (wantX - it.fx) * k
+        it.fy += (wantY - it.fy) * k
+        it.rotFx += (v.vx * SWAY.rot - it.rotFx) * k
+      }
 
       if (it.oneShot) {
         if (it.y > L.height + it.size) {
@@ -667,6 +697,24 @@ function initStickers() {
     const x = e.clientX - r.left
     const y = e.clientY - r.top - L.top
     burst(x, Math.max(L.topPad, Math.min(y, L.height)))
+  })
+
+  host.addEventListener('pointermove', (e) => {
+    if (!L.width || !L.height) return
+    const r = host.getBoundingClientRect()
+    const x = e.clientX - r.left
+    const y = e.clientY - r.top - L.top
+    const inside = x >= 0 && x <= L.width && y >= 0 && y <= L.height
+    if (pointer && inside) {
+      const dx = (x - pointer.x) / L.width
+      const dy = (y - pointer.y) / L.height
+      if (dx || dy) fluid.splat(x / L.width, y / L.height, dx, dy)
+    }
+    pointer = { x, y }
+  })
+
+  host.addEventListener('pointerleave', () => {
+    pointer = null
   })
 
   window.addEventListener('resize', () => {
@@ -773,18 +821,20 @@ function initNavTheme() {
    Dark mode toggle (persisted in localStorage)
    ------------------------------------------------------------ */
 function initTheme() {
-  const btn = document.getElementById('theme-toggle')
-  if (!btn) return
+  const btns = document.querySelectorAll('#theme-toggle, [data-theme-toggle]')
+  if (!btns.length) return
 
   const set = (night) => {
     document.body.classList.toggle('night', night)
-    btn.setAttribute('aria-pressed', night ? 'true' : 'false')
+    btns.forEach((b) => b.setAttribute('aria-pressed', night ? 'true' : 'false'))
     try {
       localStorage.setItem('theme', night ? 'night' : 'day')
     } catch (e) {}
   }
 
-  btn.addEventListener('click', () => set(!document.body.classList.contains('night')))
+  btns.forEach((b) =>
+    b.addEventListener('click', () => set(!document.body.classList.contains('night'))),
+  )
   set(document.body.classList.contains('night'))
 }
 
@@ -977,6 +1027,222 @@ function initEmailCopy() {
 }
 
 /* ------------------------------------------------------------
+   Project detail overlay (joeyjaqlino style)
+   ------------------------------------------------------------ */
+function initProjectView() {
+  const page = document.getElementById('project-view')
+  if (!page) return
+
+  const cards = gsap.utils.toArray('.w-card')
+  if (!cards.length) return
+
+  const PROJECTS = cards.map((card) => {
+    const foot = gsap.utils.toArray(card.querySelectorAll('.w-foot span')).map((s) => s.textContent.trim())
+    const tags = gsap.utils.toArray(card.querySelectorAll('.w-tags span')).map((s) => s.textContent.trim())
+    return {
+      title: card.querySelector('.w-title')?.textContent.trim() || '',
+      year: foot[0] || '',
+      role: foot[1] || '',
+      discipline: tags[0] || '',
+      tags,
+      note: card.querySelector('.w-note')?.textContent.trim() || '',
+      hero: card.querySelector('.w-shot img')?.getAttribute('src') || '',
+      shots: gsap.utils.toArray(card.querySelectorAll('.w-gal img')).map((i) => i.getAttribute('src')),
+    }
+  })
+
+  const titleEl = page.querySelector('[data-pj-title]')
+  const factsEl = page.querySelector('[data-pj-facts]')
+  const tagsEl = page.querySelector('[data-pj-tags]')
+  const intro = page.querySelector('[data-pj-intro]')
+  const heroImg = page.querySelector('[data-pj-hero]')
+  const shotsWrap = page.querySelector('[data-pj-shots]')
+  const nextA = page.querySelector('[data-pj-next]')
+  const nextH = page.querySelector('[data-pj-next-h]')
+  const nextY = page.querySelector('[data-pj-next-y]')
+  const nextC = page.querySelector('[data-pj-next-c]')
+  const nextImg = page.querySelector('[data-pj-next-img]')
+  const back = page.querySelector('.pj-back-btn')
+
+  let current = 0
+  let ctx = null
+
+  function kill() {
+    if (ctx) {
+      ctx.revert()
+      ctx = null
+    }
+    gsap.killTweensOf(page.querySelectorAll('[data-pj-word], [data-pj-fact], [data-pj-shot]'))
+  }
+
+  function render(i) {
+    current = ((i % PROJECTS.length) + PROJECTS.length) % PROJECTS.length
+    const p = PROJECTS[current]
+    const n = PROJECTS[(current + 1) % PROJECTS.length]
+
+    titleEl.innerHTML = p.title
+      .split(/\s+/)
+      .filter((w) => /[\w'’&-]/.test(w))
+      .map((w) => `<span class="pj-w"><span data-pj-word>${w}</span></span>`)
+      .join('')
+
+    factsEl.innerHTML = [
+      ['Year', p.year],
+      ['Role', p.role],
+      ['Discipline', p.discipline],
+    ]
+      .map(([k, v]) => `<div data-pj-fact><dt>${k}</dt><dd>${v}</dd></div>`)
+      .join('')
+
+    tagsEl.innerHTML = p.tags.map((t) => `<li>${t}</li>`).join('')
+
+    intro.textContent = p.note
+    heroImg.src = p.hero
+    heroImg.alt = p.title
+    shotsWrap.innerHTML = p.shots
+      .map(
+        (s) =>
+          `<figure class="pj-shot" data-pj-shot><div class="pj-shot-in"><img src="${s}" alt="" loading="lazy" /></div></figure>`,
+      )
+      .join('')
+
+    nextH.textContent = n.title
+    nextY.textContent = n.year
+    nextC.textContent = n.discipline
+    nextImg.src = n.hero
+    nextImg.alt = n.title
+
+    kill()
+    page.scrollTop = 0
+
+    if (!reduced) {
+      ctx = gsap.context(() => {
+        const words = gsap.utils.toArray('[data-pj-word]')
+        const tl = gsap.timeline({ delay: 0.12 })
+
+        if (words.length) {
+          gsap.set(words, { yPercent: 110 })
+          tl.to(words, { yPercent: 0, duration: 1.15, ease: 'expo.out', stagger: 0.06 })
+        }
+
+        const facts = gsap.utils.toArray('[data-pj-fact]')
+        if (facts.length) {
+          gsap.set(facts, { opacity: 0, y: 18 })
+          tl.to(facts, { opacity: 1, y: 0, duration: 0.8, ease: 'expo.out', stagger: 0.05 }, '-=0.75')
+        }
+
+        if (intro) {
+          gsap.fromTo(
+            intro,
+            { opacity: 0, y: 24 },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 1,
+              ease: 'expo.out',
+              scrollTrigger: { scroller: page, trigger: intro, start: 'top 85%', once: true },
+            },
+          )
+        }
+
+        gsap.utils.toArray('[data-pj-shot]').forEach((fig) => {
+          const box = fig.querySelector('.pj-shot-in')
+          const img = fig.querySelector('img')
+          if (!box) return
+
+          gsap.fromTo(
+            box,
+            { clipPath: 'inset(14% 0% 14% 0% round 6px)' },
+            {
+              clipPath: 'inset(0% 0% 0% 0% round 6px)',
+              duration: 1.2,
+              ease: 'expo.out',
+              scrollTrigger: { scroller: page, trigger: fig, start: 'top 88%', once: true },
+            },
+          )
+
+          if (img) {
+            gsap.fromTo(
+              img,
+              { yPercent: -8, scale: 1.16 },
+              {
+                yPercent: 8,
+                ease: 'none',
+                scrollTrigger: {
+                  scroller: page,
+                  trigger: fig,
+                  start: 'top bottom',
+                  end: 'bottom top',
+                  scrub: 0.6,
+                },
+              },
+            )
+          }
+        })
+
+        if (nextH) {
+          gsap.fromTo(
+            nextH,
+            { opacity: 0, y: 30 },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 1,
+              ease: 'expo.out',
+              scrollTrigger: { scroller: page, trigger: nextH, start: 'top 90%', once: true },
+            },
+          )
+        }
+      }, page)
+    }
+
+    requestAnimationFrame(() => {
+      ScrollTrigger.refresh()
+      const imgs = page.querySelectorAll('img')
+      imgs.forEach((img) => {
+        if (!img.complete) img.addEventListener('load', () => ScrollTrigger.refresh(), { once: true })
+      })
+    })
+  }
+
+  function open(i) {
+    page.classList.add('is-open')
+    page.setAttribute('aria-hidden', 'false')
+    document.body.classList.add('pj-open')
+    if (lenis && lenis.stop) lenis.stop()
+    render(i)
+  }
+
+  function close() {
+    kill()
+    page.classList.remove('is-open')
+    page.setAttribute('aria-hidden', 'true')
+    document.body.classList.remove('pj-open')
+    if (lenis && lenis.start) lenis.start()
+  }
+
+  cards.forEach((card, i) => {
+    card.querySelectorAll('.w-open a').forEach((a) => {
+      a.addEventListener('click', (e) => {
+        e.preventDefault()
+        open(i)
+      })
+    })
+  })
+
+  nextA.addEventListener('click', (e) => {
+    e.preventDefault()
+    render(current + 1)
+  })
+
+  back.addEventListener('click', close)
+  page.querySelectorAll('.pj-nav a[href^="#"]').forEach((a) => a.addEventListener('click', close))
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && page.classList.contains('is-open')) close()
+  })
+}
+
+/* ------------------------------------------------------------
    Contact reveal + footer ghost wordmark fit (joeyjaqlino)
    ------------------------------------------------------------ */
 function initContactReveal() {
@@ -1023,6 +1289,7 @@ window.addEventListener('load', () => {
   initHeroRoll()
   if (reduced) {
     gsap.set(['.hero-sun', '.hero-cloud', '.hero-eyebrow', '.hero-headline', '.hero-rollwrap'], { clearProps: 'all' })
+    initProjectView()
     initFooterGhost()
     initTimelineExpand()
     initEmailCopy()
@@ -1035,6 +1302,7 @@ window.addEventListener('load', () => {
   initJourneyLine()
   initStickers()
   initWorkStack()
+  initProjectView()
   initContactReveal()
   initFooterGhost()
   initTimelineExpand()
