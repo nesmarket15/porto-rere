@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en" data-wf-page="porto">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Syahirotul Baroroh — UI/UX, Data &amp; Project | RERE®</title>
+    <meta
+      name="description"
+      content="Portfolio of Syahirotul Baroroh (Rere) — Information Systems undergraduate at Brawijaya University focused on project management, business process modeling (BPMN), and UI/UX design. Seeking an internship."
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23FFFF23'/%3E%3Ctext x='50' y='68' font-family='Arial, sans-serif' font-size='48' font-weight='700' text-anchor='middle' fill='%23000'%3ER%3C/text%3E%3C/svg%3E"
+    />
+    <link rel="preconnect" href="https://api.fontshare.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://api.fontshare.com/v2/css?f[]=neue-montreal@400,500,700&f[]=gambarino@400,500&display=swap"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Fraunces:opsz,wght@9..144,400;9..144,500&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@300;400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preload" as="image" href="/img/zk-hero-sky-day.webp" />
+    <link rel="preload" as="image" href="/img/zk-sky-band.svg" />
+  </head>
+  <body>
+    <script>
+      try {
+        if (localStorage.getItem('theme') === 'night') document.body.classList.add('night')
+      } catch (e) {}
+    </script>
+    <div class="page-wrap">
+
+      <!-- ============ 1. FLOATING NAV (glass pill) ============ -->
+      <header class="nav-wrap">
+        <nav class="nav">
+          <div class="nav-side">
+            <a href="#home" class="nav-logo" aria-label="Rere — home">
+              <svg class="nav-logo-pin" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 1 1 16 0Z" />
+                <circle cx="12" cy="10" r="3" />
+              </svg>
+              <span>SURABAYA, ID</span>
+            </a>
+          </div>
+
+          <div class="nav-pill">
+            <a href="#home" class="nav-avatar" aria-label="Rere — home">
+              <img src="/img/hero-rere.png" alt="Syahirotul Baroroh" />
+            </a>
+            <div class="nav-links">
+              <a href="#about" class="nav-link">About</a>
+              <a href="#projects" class="nav-link">Work</a>
+            </div>
+            <a href="#contact" class="nav-cta">
+              Contact Me
+            </a>
+          </div>
+
+          <div class="nav-side right">
+            <button class="nav-icon day-toggle" id="theme-toggle" aria-label="Toggle dark mode" aria-pressed="false">
+              <svg class="toggle-ico ico-moon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+              <svg class="toggle-ico ico-sun" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="currentColor"/><g stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4"/></g></svg>
+            </button>
+            <a href="https://x.com" target="_blank" rel="noopener" class="nav-icon" aria-label="X / Twitter">
+              <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            </a>
+            <a href="https://linkedin.com/in/syahirotul-baroroh" target="_blank" rel="noopener" class="nav-icon" aria-label="LinkedIn">
+              <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 1 1 0-4.124 2.062 2.062 0 0 1 0 4.124zM7.119 20.452H3.555V9h3.564v11.452z"/></svg>
+            </a>
+          </div>
+        </nav>
+      </header>
+
+      <!-- ============ 2. HERO — pinned sky, scrolls away under content ============ -->
+      <section class="hero" id="home">
+        <img class="hero-shader" src="/img/zk-hero-shader-night.webp" alt="" aria-hidden="true" />
+        <div class="hero-sky" aria-hidden="true"></div>
+        <div class="hero-stars" aria-hidden="true"></div>
+        <div class="hero-noise" aria-hidden="true"></div>
+        <div class="hero-meteor" aria-hidden="true"></div>
+        <div class="hero-content">
+          <img class="hero-sun" src="/img/zk-sun.svg" alt="" aria-hidden="true" />
+          <div class="hero-moon-glow" aria-hidden="true"></div>
+          <img class="hero-moon" src="/img/zk-moon.svg" alt="" aria-hidden="true" />
+          <img class="hero-cloud cloud-a" src="/img/zk-cloud.svg" alt="" aria-hidden="true" />
+          <img class="hero-cloud cloud-b" src="/img/zk-cloud.svg" alt="" aria-hidden="true" />
+          <div class="hero-title">
+            <p class="hero-eyebrow">Syahirotul Baroroh</p>
+            <h1 class="hero-headline">Ideas, Shaped Into Impact.</h1>
+            <div class="hero-rollwrap">
+              <span class="hero-roll" id="hero-roll" aria-label="Project Management, UI/UX, Digital Product"></span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <main class="site-content">
+
+      <!-- ============ 3. ABOUT / JOURNEY ============ -->
+      <section class="about" id="about">
+        <img class="about-band" src="/img/zk-sky-band.svg" alt="" aria-hidden="true" />
+
+        <svg class="journey-line" aria-hidden="true">
+          <defs>
+            <mask id="journeyMask">
+              <path id="journeyMaskPath" fill="none" stroke="#fff" stroke-width="44" d="" />
+            </mask>
+          </defs>
+          <path id="journeyTrail" fill="none" stroke="currentColor" stroke-width="1.4" stroke-dasharray="10 6" mask="url(#journeyMask)" d="" />
+          <path id="journeyMotion" fill="none" stroke="none" d="" />
+        </svg>
+        <img class="journey-plane" src="/img/paper-plane.svg" alt="" aria-hidden="true" />
+
+        <div class="about-intro">
+          <span class="about-eyebrow">About Me</span>
+          <p class="about-copy">Information Systems undergraduate at Brawijaya University — shaping ideas into impact through project management, business process design, data, and UI/UX.</p>
+          <p class="about-copy is-bold">I believe every solid system starts with understanding people, and I am here to keep building mine.</p>
+        </div>
+
+        <div class="timeline">
+          <div class="timeline-track">
+
+            <div class="timeline-item">
+              <span class="timeline-year">01 — Discovery</span>
+              <p class="timeline-card-text">Began <strong>Information Systems</strong> at <strong>Brawijaya University (FILKOM)</strong>, GPA <strong>3.83/4.00</strong>.</p>
+            </div>
+
+            <div class="timeline-item">
+              <span class="timeline-year">02 — Fundamentals</span>
+              <p class="timeline-card-text"><strong>BPMN Lab Assistant</strong> — modelling real processes in <strong>Bizagi</strong> and <strong>Camunda</strong>.</p>
+            </div>
+
+            <div class="timeline-item">
+              <span class="timeline-year">03 — Data</span>
+              <p class="timeline-card-text"><strong>SQL Lab Assistant</strong> — from basic to intermediate, with hands-on troubleshooting.</p>
+            </div>
+
+            <div class="timeline-item">
+              <span class="timeline-year">04 — Leadership</span>
+              <p class="timeline-card-text"><strong>Project officer</strong> for Close The Gap; staff for <strong>Indonesian Future Leaders</strong>; <strong>HR</strong> at DISPLAY.</p>
+            </div>
+
+            <div class="timeline-item">
+              <span class="timeline-year">05 — Real World</span>
+              <p class="timeline-card-text"><strong>SDG capstone, 3rd place</strong>; finalist at <strong>Intuitiva</strong> national UI/UX competition.</p>
+            </div>
+
+            <div class="timeline-item">
+              <span class="timeline-year">06 — The Future</span>
+              <p class="timeline-card-text">Open to an <strong>internship</strong> in project management, business analysis, or UI/UX.</p>
+            </div>
+
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ============ 4. SELECTED WORK (card stack) ============ -->
+      <section class="work" id="projects">
+        <div class="section-head work-head">
+          <span class="section-eyebrow">Selected Work</span>
+          <h2 class="section-title h2-dark">
+            <span class="line-mask"><span class="line">Some stuff</span></span>
+            <span class="line-mask"><span class="line">I've worked on.</span></span>
+          </h2>
+          <p class="section-lede">A few projects from different corners — spanning project management, business process, data, and UI/UX design.</p>
+        </div>
+
+        <div class="w-stage">
+          <div class="w-bleed">
+            <div class="w-stack">
+              <article class="w-card" data-w-card>
+                <div class="w-in">
+                  <div class="w-meta">
+                    <span class="w-num">01 / Capstone</span>
+                    <h3 class="w-title">Capstone Project · FILKOM</h3>
+                    <div class="w-tags"><span>SDGs</span><span>Prototype</span><span>Pitching</span></div>
+                    <p class="w-note">Led ideation and business planning for an SDG-aligned app, delivered a pitch, and won 3rd place best group award.</p>
+                    <p class="w-foot"><span>2024</span><span>Design and build</span></p>
+                    <p class="w-open"><a href="#">View project <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 17L17 7M17 7H9M17 7v8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a></p>
+                  </div>
+                  <div class="w-media">
+                    <div class="w-shot"><img src="/img/work-01.svg" alt="Capstone Project · FILKOM" loading="lazy" /></div>
+                    <div class="w-gal">
+                      <figure><img src="/img/journey-1.svg" alt="" loading="lazy" /></figure>
+                      <figure><img src="/img/journey-2.svg" alt="" loading="lazy" /></figure>
+                    </div>
+                  </div>
+                </div>
+              </article>
+
+              <article class="w-card" data-w-card>
+                <div class="w-in">
+                  <div class="w-meta">
+                    <span class="w-num">02 / UI/UX</span>
+                    <h3 class="w-title">Intuitiva UI/UX</h3>
+                    <div class="w-tags"><span>UI/UX</span><span>Figma</span><span>Competition</span></div>
+                    <p class="w-note">Finalist in a national UI/UX competition among 500+ participants — design under real pressure, with a strong team.</p>
+                    <p class="w-foot"><span>2025</span><span>Design and build</span></p>
+                    <p class="w-open"><a href="#">View project <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 17L17 7M17 7H9M17 7v8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a></p>
+                  </div>
+                  <div class="w-media">
+                    <div class="w-shot"><img src="/img/work-02.svg" alt="Intuitiva UI/UX" loading="lazy" /></div>
+                    <div class="w-gal">
+                      <figure><img src="/img/journey-3.svg" alt="" loading="lazy" /></figure>
+                      <figure><img src="/img/journey-4.svg" alt="" loading="lazy" /></figure>
+                    </div>
+                  </div>
+                </div>
+              </article>
+
+              <article class="w-card" data-w-card>
+                <div class="w-in">
+                  <div class="w-meta">
+                    <span class="w-num">03 / Business</span>
+                    <h3 class="w-title">Taman Bunga Nusantara</h3>
+                    <div class="w-tags"><span>TOWS</span><span>PESTLE</span><span>VRIO</span></div>
+                    <p class="w-note">Analyzed internal and external factors to propose sustainable solutions for a national garden, using strategic frameworks.</p>
+                    <p class="w-foot"><span>2024</span><span>Case study</span></p>
+                    <p class="w-open"><a href="#">View project <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 17L17 7M17 7H9M17 7v8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a></p>
+                  </div>
+                  <div class="w-media">
+                    <div class="w-shot"><img src="/img/work-03.svg" alt="Taman Bunga Nusantara" loading="lazy" /></div>
+                    <div class="w-gal">
+                      <figure><img src="/img/journey-5.svg" alt="" loading="lazy" /></figure>
+                      <figure><img src="/img/journey-6.svg" alt="" loading="lazy" /></figure>
+                    </div>
+                  </div>
+                </div>
+              </article>
+
+              <article class="w-card" data-w-card>
+                <div class="w-in">
+                  <div class="w-meta">
+                    <span class="w-num">04 / Event</span>
+                    <h3 class="w-title">Close The Gap</h3>
+                    <div class="w-tags"><span>PM</span><span>Event</span><span>Leadership</span></div>
+                    <p class="w-note">Project officer leading inclusive events for people with disabilities — from grand design to full execution and logistics.</p>
+                    <p class="w-foot"><span>2024</span><span>Design and build</span></p>
+                    <p class="w-open"><a href="#">View project <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 17L17 7M17 7H9M17 7v8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a></p>
+                  </div>
+                  <div class="w-media">
+                    <div class="w-shot"><img src="/img/work-04.svg" alt="Close The Gap" loading="lazy" /></div>
+                    <div class="w-gal">
+                      <figure><img src="/img/journey-2.svg" alt="" loading="lazy" /></figure>
+                      <figure><img src="/img/journey-5.svg" alt="" loading="lazy" /></figure>
+                    </div>
+                  </div>
+                </div>
+              </article>
+
+              <article class="w-card" data-w-card>
+                <div class="w-in">
+                  <div class="w-meta">
+                    <span class="w-num">05 / Teaching</span>
+                    <h3 class="w-title">BPMN Lab Assistant</h3>
+                    <div class="w-tags"><span>BPMN</span><span>Bizagi</span><span>Camunda</span></div>
+                    <p class="w-note">Guiding Information Systems students to model real-world business processes with BPMN in Bizagi and Camunda.</p>
+                    <p class="w-foot"><span>2025</span><span>Teaching</span></p>
+                    <p class="w-open"><a href="#">View project <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 17L17 7M17 7H9M17 7v8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a></p>
+                  </div>
+                  <div class="w-media">
+                    <div class="w-shot"><img src="/img/work-07.svg" alt="BPMN Lab Assistant" loading="lazy" /></div>
+                    <div class="w-gal">
+                      <figure><img src="/img/journey-3.svg" alt="" loading="lazy" /></figure>
+                      <figure><img src="/img/journey-6.svg" alt="" loading="lazy" /></figure>
+                    </div>
+                  </div>
+                </div>
+              </article>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ 7. CONTACT (joeyjaqlino style) ============ -->
+      <section class="v4-sec contact" id="contact">
+        <div class="v4-shell">
+          <div class="c-grid">
+            <div>
+              <h2 class="c-big" data-v4-up>Let's talk.</h2>
+              <p class="v4-body" style="margin-top:1.25rem" data-v4-up>
+                I'm open to full-time roles, freelance work, and interesting projects.
+              </p>
+              <p class="v4-body" style="margin-top:1rem" data-v4-up>
+                You don't need a fancy brief. Just tell me what you're working on and we'll go from there.
+              </p>
+              <div class="c-social" data-v4-up>
+                <a class="c-soc" href="https://instagram.com" rel="me noopener" target="_blank" aria-label="Instagram">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none"/></svg>
+                </a>
+                <a class="c-soc" href="https://linkedin.com/in/syahirotul-baroroh" rel="me noopener" target="_blank" aria-label="LinkedIn">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><line x1="7.5" y1="10" x2="7.5" y2="17"/><circle cx="7.5" cy="7" r="1.1" fill="currentColor" stroke="none"/><path d="M11 17v-4a2.5 2.5 0 0 1 5 0v4"/></svg>
+                </a>
+              </div>
+            </div>
+            <div data-v4-up>
+              <form class="c-form" onsubmit="return false">
+                <p class="c-hp" aria-hidden="true"><label>Leave this empty<input type="text" name="hp" tabindex="-1" autocomplete="off"></label></p>
+                <label class="c-field">
+                  <span>Name</span>
+                  <input type="text" name="name" required autocomplete="name" placeholder="Your name" />
+                </label>
+                <label class="c-field">
+                  <span>Email</span>
+                  <input type="email" name="email" required autocomplete="email" placeholder="you@company.com" />
+                </label>
+                <label class="c-field">
+                  <span>Your project</span>
+                  <textarea name="msg" rows="4" required placeholder="What are you working on?"></textarea>
+                </label>
+                <button type="submit" class="c-submit">Send it &rarr;</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ 8. FOOTER (joeyjaqlino style) ============ -->
+      <footer class="f-out">
+        <div class="f-in v4-shell">
+          <div class="f-grid">
+            <p class="f-statement">That's all for now.</p>
+
+            <div class="f-col">
+              <h2>/Quick links</h2>
+              <div class="f-pills">
+                <a href="#home">Home</a>
+                <a href="#about">About Me</a>
+                <a href="#projects">Works</a>
+                <a href="#contact">Contact</a>
+              </div>
+            </div>
+
+            <div class="f-col f-contact">
+              <h2>/Contact</h2>
+              <a href="mailto:syahirotulrere@gmail.com">syahirotulrere@gmail.com</a>
+              <span class="f-muted" style="margin-top:0.6rem">Surabaya, Indonesia</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="f-ghost" aria-hidden="true">Syahirotul</div>
+
+        <div class="v4-shell">
+          <div class="f-legal">
+            <span>&copy; 2026 Syahirotul Baroroh. All rights reserved.</span>
+            <span><a href="#home">Back to top &uarr;</a></span>
+          </div>
+        </div>
+      </footer>
+
+      </main>
+
+      <!-- curve-swipe page transition overlay -->
+      <div class="page-transition" aria-hidden="true">
+        <svg class="pt-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <path class="pt-curtain" d="" />
+          <path class="pt-edge" d="" vector-effect="non-scaling-stroke" />
+        </svg>
+        <p class="pt-label"></p>
+      </div>
+
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
