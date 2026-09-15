@@ -143,7 +143,7 @@ function initPageTransition() {
 const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
 /* ------------------------------------------------------------
-   Selected Work — pinned card stack (ported from joeyjaqlino v4.js)
+   Selected Work - pinned card stack (ported from joeyjaqlino v4.js)
    ------------------------------------------------------------ */
 function initWorkStack() {
   if (reduced || window.innerWidth < 901) return
@@ -222,7 +222,7 @@ function revealLines(root, scroll = true) {
 }
 
 /* ------------------------------------------------------------
-   Hero entrance — pinned sky, sun, clouds & name
+   Hero entrance - pinned sky, sun, clouds & name
    ------------------------------------------------------------ */
 function initHero() {
   const tl = gsap.timeline({ defaults: { ease: 'power4.out' } })
@@ -248,7 +248,7 @@ function initHero() {
 }
 
 /* ------------------------------------------------------------
-   Hero scroll departure — hero pinned, content scales down
+   Hero scroll departure - hero pinned, content scales down
    as the next section rises over it (zainabkabira style)
    ------------------------------------------------------------ */
 function initHeroScroll() {
@@ -282,7 +282,7 @@ function initSectionTitles() {
 }
 
 /* ------------------------------------------------------------
-   Journey line — Zainab-style: wide dotted trail + plane flying
+   Journey line - Zainab-style: wide dotted trail + plane flying
    from the sky band, weaving left→right over the whole About
    ------------------------------------------------------------ */
 function initJourneyLine() {
@@ -357,7 +357,7 @@ function initJourneyLine() {
   /* Centre each note over the trail, spread down its vertical span. CSS keeps
      them horizontally centred; here we only choose the y of each note. The note
      plate (page colour) knocks the dotted line out behind it, so the line reads
-     as passing behind the text — the same interference the intro has. */
+     as passing behind the text - the same interference the intro has. */
   function placeStops() {
     const items = gsap.utils.toArray('.about .timeline-item')
     if (!items.length || !segs.length) return
@@ -448,7 +448,7 @@ function initJourneyLine() {
     pathBotY = bb.y + bb.height
 
     /* size the section to the trail so the line is never clipped */
-    const H = Math.ceil(pathBotY + Math.max(180, window.innerHeight * 0.2))
+    const H = Math.ceil(pathBotY + Math.max(40, window.innerHeight * 0.06))
     about.style.height = `${H}px`
     svg.setAttribute('viewBox', `0 0 ${about.clientWidth} ${H}`)
 
@@ -518,7 +518,7 @@ function initJourneyLine() {
 }
 
 /* ------------------------------------------------------------
-   Falling stickers — ported from haoqi-revamp (scene/stickers.js).
+   Falling stickers - ported from haoqi-revamp (scene/stickers.js).
    The three.js sprite config is reproduced in DOM: stickers drift
    down with a sine wind, spin and recycle. About + Work only.
    ------------------------------------------------------------ */
@@ -565,7 +565,7 @@ function initStickers() {
     L.width = host.clientWidth
     L.unit = worldUnit()
     const band = host.querySelector('.about-band')
-    L.top = band ? band.getBoundingClientRect().bottom - hr.top - 200 : 0
+    L.top = band ? band.getBoundingClientRect().top - hr.top : 0
     layer.style.top = `${Math.round(L.top)}px`
     layer.style.height = 'auto'
     L.height = layer.clientHeight
@@ -682,7 +682,7 @@ function initStickers() {
    Scroll reveals (generic)
    ------------------------------------------------------------ */
 function initReveals() {
-  // Journey notes pinned along the trail (opacity only — JS owns transform)
+  // Journey notes pinned along the trail (opacity only - JS owns transform)
   gsap.utils.toArray('.about .timeline-item').forEach((item) => {
     gsap.fromTo(
       item,
@@ -730,7 +730,7 @@ function initTimelineExpand() {
 }
 
 /* ------------------------------------------------------------
-   Scrollspy — highlight active nav link
+   Scrollspy - highlight active nav link
    ------------------------------------------------------------ */
 function initActiveLinks() {
   const links = document.querySelectorAll('.nav-link')
@@ -756,7 +756,7 @@ function initActiveLinks() {
 }
 
 /* ------------------------------------------------------------
-   Navbar contrast on scroll — white over hero, dark in content
+   Navbar contrast on scroll - white over hero, dark in content
    ------------------------------------------------------------ */
 function initNavTheme() {
   const hero = document.querySelector('.hero')
@@ -789,7 +789,7 @@ function initTheme() {
 }
 
 /* ------------------------------------------------------------
-   Hero headline — split into letters for hover tilt (zainab style)
+   Hero headline - split into letters for hover tilt (zainab style)
    ------------------------------------------------------------ */
 function initHeroLetters() {
   const h = document.querySelector('.hero-headline')
@@ -805,7 +805,7 @@ function initHeroLetters() {
 }
 
 /* ------------------------------------------------------------
-   Hero rotating words — roll up through roles (zainabkabira style)
+   Hero rotating words - roll up through roles (zainabkabira style)
    ------------------------------------------------------------ */
 function initHeroRoll() {
   const host = document.getElementById('hero-roll')
@@ -868,7 +868,7 @@ function initHeroRoll() {
 }
 
 /* ------------------------------------------------------------
-   Day wind gust — cirrus clouds drift left→right when theme
+   Day wind gust - cirrus clouds drift left→right when theme
    flips night→day (zainabkabira style)
    ------------------------------------------------------------ */
 function initSkyGust() {
@@ -893,7 +893,7 @@ function initSkyGust() {
 }
 
 /* ------------------------------------------------------------
-   Night shooting star (zainabkabira style) — one meteor at a time
+   Night shooting star (zainabkabira style) - one meteor at a time
    ------------------------------------------------------------ */
 function initMeteor() {
   const hero = document.querySelector('.hero')
